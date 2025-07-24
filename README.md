@@ -74,9 +74,39 @@ As Nginx does, you can:
 
 ## Which System Call has been used for the IO Multiplexing part?
 
-When building a server, you have 3 options for polling 
+When building a server, you have to use IO Multiplexing by polling file descriptors (FD) that are ready for:
+- reading (incoming client connections on a socket)
+- or writing (sending back a response to the client through a socket)
 
+For polling, you have 3 different system call options: `select`, `poll` or `epoll`.
 
+For this project, I selected Epoll as it is the most efficient and modern option.
+
+Epoll is included withi the following hear file: `<sys/epoll.h>`.
+
+Basically, epoll is broken down into three sub system calls:
+
+### epoll_create() 
+
+It creates a new epoll instance and returns a file descriptor.
+Only one epoll instance is used throughout the server's lifetime.
+This epoll instance will contain all socket FD related to server (ports) and client connections.
+
+### epoll_ctl()
+
+Epoll_ctl allows to manage file descriptors within your epoll instance created via epoll_create():
+- if you select the second argument `EPOLL_CTL_ADD`, it add FDs you want to poll within your instance
+- if you select `EPOLL_CTL_DEL`, it will remove the FD of your choice from the epoll instance
+
+### epoll_wait()
+
+This system call query the epoll instance in order to know if one or more file descriptors are ready for reading (EPOLLIN) and/or reading (EPOLLOUT)
+
+> [!TIP]
+> To get more information about epoll() and its different system call prototypes, you can simply run `man epoll` in your terminal.
+
+I also I recommend you to check this amazing article from the "Code(quoi);" blog: [Sockets and Network Programming in C ](https://www.codequoi.com/en/sockets-and-network-programming-in-c/)
+It is not directly related to epoll(), but it explains really well how sockets works with examples using select() and poll().
 
 ## I tested the site and I'm happy. Now I'd like to clean it up. What do I do?
 
