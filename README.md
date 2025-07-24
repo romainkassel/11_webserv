@@ -81,8 +81,13 @@ When building a server, you have to use IO Multiplexing by polling file descript
 For polling, you have 3 different system call options: `select`, `poll` or `epoll`.
 
 For this project, I selected Epoll as it is the most efficient and modern option.
+Here is a significant example of *the time it takes to check different quantities of file descriptors via some of the most common polling methods*.
 
-Epoll is included withi the following hear file: `<sys/epoll.h>`.
+<img width="681" height="129" alt="webserv-multiplexing-poll-times-performance" src="https://github.com/user-attachments/assets/84b34018-06cc-4439-b4e2-5f91a35d4180" />
+
+If you want more information, this picture comes from the following article: [epoll() Tutorial – epoll() In 3 Easy Steps!](https://suchprogramming.com/epoll-in-3-easy-steps/)
+
+Epoll is included within the following hear file: `<sys/epoll.h>`.
 
 Basically, epoll is broken down into three sub system calls:
 
